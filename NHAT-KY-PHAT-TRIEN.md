@@ -196,6 +196,25 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   Thống kê, sang màn Cài đặt đúng, bấm Xuất hiện ô kết quả có nội
   dung JSON, quay lại Thống kê đúng, danh sách dự án vẫn chạy).
 
+## Màn Thống kê: căn giữa + rắn bò + ngựa phi 2026-11-06
+
+- Anh chê màn Thống kê bên dưới trống quá, yêu cầu: cho block ra giữa;
+  trên dưới làm hiệu ứng; rắn chạy ở trên block; ngựa dưới block.
+- Đã làm: màn Thống kê căn giữa theo chiều dọc (flex, `min-height:
+  calc(100vh - 240px)`); phía trên thẻ Thống kê là làn rắn 🐍 bò
+  trườn qua lại (animation `slither`, uốn lượn lên xuống); phía dưới
+  là làn ngựa 🐎 phi nước đại (animation `gallop`, nhún nhảy như
+  đang phi) trên một vạch xanh nhạt làm đường chạy; cả hai lặp vô hạn.
+  Tôn trọng `prefers-reduced-motion` (ai tắt chuyển động thì rắn
+  ngựa đứng yên).
+- Sự cố khi sửa: một lần sửa làm rớt dấu nháy khiến script lỗi cú
+  pháp — Cloudflare trả 400 nên bản lỗi KHÔNG lên được, bản cũ vẫn
+  chạy tốt. Bài học: luôn chạy `node --check` và DỪNG deploy nếu lỗi
+  (dùng `set -e`), đừng để deploy chạy tiếp sau khi kiểm tra lỗi.
+- Kiểm chứng: trang thật có đủ rắn/ngựa/animation/căn giữa, không còn
+  tím; script trang thật `node --check` OK; harness chạy tốt (Thống
+  kê hiện 3/6/8, Dự án và Cài đặt vẫn chạy).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
