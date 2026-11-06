@@ -272,6 +272,46 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   tiết: tên tài khoản xanh, trạng thái cùng dòng với tên dự án, viên
   note nhà cung cấp vẫn còn).
 
+## Thiết kế lại toàn bộ theo chuẩn Refactoring UI / M3 / iOS HIG 2026-11-06
+
+- Anh chê giao diện vẫn xấu, yêu cầu nghiên cứu skill thiết kế trên
+  mạng rồi thiết kế lại. Đã chạy nghiên cứu sâu (deep research) và
+  có bản hướng dẫn đầy đủ: `research_notes/mobile-app-ui-redesign-20261106-1103/report.md`
+  + trang hướng dẫn tương tác "Thiết kế lại giao diện" (artifact,
+  có bản mẫu app chạy thật trong khung máy + giải trình hệ thống).
+- Áp vào app thật (`src/worker.js`): toàn bộ CSS viết lại theo token
+  `:root` — thang khoảng cách 4px (lề 16, thẻ 20, khe 12–16), bán
+  kính 8/12/16/20, bóng mềm 2 lớp (`--shadow-card`), màu nền trang
+  `#F1F5F9`, chữ `#0F172A`/`#475569`/`#64748B`, nút chính xanh lá
+  đậm `#047857` (đủ tương phản chữ trắng).
+- Chữ: Be Vietnam Pro (font làm riêng cho tiếng Việt, dấu không vỡ)
+  qua Google Fonts, fallback system-ui; số thống kê 30px/700; tiêu
+  đề màn 21px/700; tiêu đề thẻ 16px/600; ô nhập 48px, cỡ chữ 16px
+  (không bị iOS tự phóng to khi bấm).
+- Header: gradient dịu 2 tông đậm `#047857 → #0F766E` (thay 3 tông
+  chói trước đây); thẻ trắng bo 16px, viền mảnh `#E2E8F0` + bóng
+  mềm; thanh tab dưới: nền trắng mờ + blur, viền trên mảnh, icon
+  24px + nhãn 11px, tab đang chọn có viên pill xanh nhạt + chữ
+  xanh đậm, chừa safe-area cho iPhone.
+- Nút bấm/nút tab/thẻ có phản hồi nhấn (`scale(.97)`, 120ms);
+  chuyển màn có hiệu ứng mờ + trượt nhẹ 180ms; tôn trọng
+  `prefers-reduced-motion` (tắt hết chuyển động).
+- Màn trống (chưa có dự án/tài khoản) giờ có hình minh họa + giải
+  thích + 1 nút hành động ("+ Thêm dự án"/"+ Thêm tài khoản", bấm
+  là mở đúng form thêm mới qua hàm `goAdd`).
+- GIỮ NGUYÊN theo ý anh đã chốt: tiêu đề dự án/tài khoản màu xanh
+  (bản hướng dẫn gốc đề nghị bỏ chữ xanh, nhưng anh đã chọn xanh 2
+  lần nên em giữ), rắn 🐍 + ngựa 🐎, chọn nền trang 5 màu + tải ảnh,
+  không tím, nhãn note, gạch đầu dòng chỉ đậm nhãn.
+- Kiểm chứng: trang thật có đủ font/token/bóng/tab pill/trạng thái
+  trống; script trang thật `node --check` OK; harness 9 kiểm tra
+  đạt (thống kê 3/6/8, danh sách + chi tiết, màn trống + CTA, mở
+  đúng form, chọn nền + về mặc định). Lưu ý của bản hướng dẫn:
+  trong bản mẫu tương tác, 2 nút Lưu dự án và Xuất toàn bộ nằm dưới
+  vùng cuộn nên probe kiểm thử chưa bấm được (vuốt trong khung là
+  tới); font Be Vietnam Pro bị chặn trong môi trường kiểm thử, mở
+  bằng trình duyệt thật sẽ tải bình thường.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
