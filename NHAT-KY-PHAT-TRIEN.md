@@ -215,6 +215,26 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   tím; script trang thật `node --check` OK; harness chạy tốt (Thống
   kê hiện 3/6/8, Dự án và Cài đặt vẫn chạy).
 
+## Rắn ngựa to hơn + nền trang chọn/tải lên + thẻ Thống kê có màu 2026-11-06
+
+- Anh yêu cầu: cho rắn ngựa to ra; set nền cho trang; trong Cài đặt
+  cho chọn hoặc tải ảnh lên làm nền; block Thống kê cũng có màu nền.
+- Rắn ngựa to gần gấp đôi (30px → 54px), biên độ uốn/nhún tăng theo
+  (rắn ±10px, ngựa nhún 18px).
+- Thẻ Thống kê giờ có màu nền: gradient xanh lá → xanh ngọc, chữ
+  trắng; 3 ô số thành ô trắng mờ trên nền xanh.
+- Nền trang mới trong menu Cài đặt ("🖼️ Nền trang"): 5 nút tròn chọn
+  nhanh — Mặc định (xám nhạt), Xanh lá, Xanh dương, Hoàng hôn, Đêm
+  (tối); nút đang chọn có viền xanh lá. Thêm ô tải ảnh lên: chọn ảnh
+  từ máy, tự thu nhỏ tối đa 1280px + nén JPEG 0.8 rồi lưu làm nền
+  (ảnh quá lớn thì báo lỗi, không lưu). Lựa chọn lưu trong
+  localStorage của trình duyệt (`stk_bg`) nên mở lại vẫn giữ; lưu ý
+  là lưu theo từng trình duyệt/thiết bị, đổi máy khác phải chọn lại.
+- Kiểm chứng: trang thật có đủ các thành phần mới; script trang thật
+  `node --check` OK; harness 7 kiểm tra đạt (mặc định → xanh lá →
+  đêm → về mặc định, nền ảnh `cover/fixed`, màn Cài đặt và Thống kê
+  chuyển qua lại bình thường).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
