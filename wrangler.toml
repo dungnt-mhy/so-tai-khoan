@@ -1,0 +1,17 @@
+# Sổ tài khoản — Cloudflare Workers + D1 + R2
+# Tài khoản Cloudflare MỚI, độc lập hoàn toàn với tài khoản cũ.
+# Account: dungnt.storage@gmail.com, ID b4b733068462ffa3b17a0941c631e0e8
+# Deploy bằng API trực tiếp (xem docs/DEPLOY.md); wrangler.toml giữ lại
+# để sau này deploy bằng wrangler khi đã có token ở máy deploy.
+name = "so-tai-khoan"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "so-tai-khoan-db"
+database_id = "8f5aed90-3850-4498-b777-28f7e7396608"
+
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "so-tai-khoan-backups"
