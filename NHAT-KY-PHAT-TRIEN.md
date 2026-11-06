@@ -152,6 +152,24 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
 - Mật khẩu Admin: anh ĐÃ ĐỔI (kiểm tra lúc 15:55, mật khẩu tạm trả
   401) — từ giờ đừng dùng mật khẩu tạm nữa.
 
+## Điều hướng kiểu app mobile 2026-11-06
+
+- Anh chê thiết kế cũ chán, yêu cầu: menu ngang dưới chân; vào app là
+  Thống kê; mỗi nút là một màn riêng; danh sách có thu gọn + về đầu
+  trang; viền phải danh sách có thu gọn/mở rộng (10 mục); đăng xuất
+  lên trên.
+- Đã làm: bỏ hàng tab trên đầu, thay bằng thanh menu cố định dưới chân
+  (📊 Thống kê · 📁 Dự án · 👤 Tài khoản · ➕ Thêm mới); mở app là vào
+  ngay màn Thống kê; mỗi nút menu là một màn riêng (Thống kê / danh
+  sách / thêm mới); nút Đăng xuất chuyển lên góc phải header, chỉ
+  hiện khi đã đăng nhập; danh sách mặc định hiện 10 mục, dưới danh
+  sách có dòng "Hiển thị 10/12" kèm nút "Xem thêm (2)" / "Thu gọn"
+  và "⬆ Đầu trang" ở phía phải.
+- Kiểm chứng: script trang thật chạy `node --check` OK; harness DOM
+  giả chạy đủ 8 kiểm tra (vào app là Thống kê, chuyển màn đúng, giới
+  hạn 10 → mở rộng 12 → thu gọn lại 10, nút đăng xuất hiện sau đăng
+  nhập). Đã đẩy GitHub (commit 3eceba45).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
