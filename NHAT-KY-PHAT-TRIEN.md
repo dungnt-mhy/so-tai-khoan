@@ -395,6 +395,71 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   lời mời → hướng dẫn làm tay hiện ở cả hai chỗ; có lời mời → gọi
   đúng hộp cài; iOS hiện hướng dẫn riêng).
 
+## Thêm sửa/xoá 2026-11-06
+
+- Anh yêu cầu thêm chức năng sửa và xoá. API sửa/xoá dự án, tài
+  khoản, liên kết đã có từ GĐ1; chỉ thiếu sửa tài nguyên và sửa vai
+  trò liên kết — đã thêm: `PUT /api/resources/:id` (đổi được cả tài
+  khoản chủ) và `GET`/`PUT /api/projects/:id/accounts/:accountId`
+  (đổi vai trò + ghi chú; đổi sang vai trò đã gắn rồi → 409).
+- Giao diện:
+  - Thẻ danh sách (dự án + tài khoản): thêm nút **✏️ Sửa**,
+    **🗑️ Xoá** cạnh nút Chi tiết.
+  - Màn chi tiết dự án: **✏️ Sửa dự án / 🗑️ Xoá dự án**; mỗi tài
+    khoản gắn vào có **✏️ Vai trò** (sửa vai trò + ghi chú) và
+    **🔗 Gỡ** (gỡ liên kết); mỗi tài nguyên có **✏️ / 🗑️**.
+  - Màn chi tiết tài khoản: **✏️ Sửa tài khoản / 🗑️ Xoá tài
+    khoản**; mỗi dự án có **🔗 Gỡ**; mỗi tài nguyên có **✏️ / 🗑️**.
+  - Sửa dùng lại đúng form Thêm mới (điền sẵn dữ liệu, tiêu đề
+    đổi thành "Sửa…", nút thành "Lưu thay đổi"); mở form thêm mới
+    thì tự xóa trạng thái sửa + xóa trắng các ô. Form dự án thêm ô
+    Link; form tài khoản thêm ô Hết hạn (ngày); form tài nguyên
+    thêm ô Ghi chú — các ô mới dùng được cả khi thêm mới.
+  - Xoá hỏi xác nhận (`confirm`) trước khi xoá; bấm Hủy thì không
+    làm gì. Xoá dự án gỡ luôn các liên kết. Xoá tài khoản đang còn
+    gắn dự án thì server chặn 409 và báo "gỡ liên kết trước" — phải
+    gỡ hết liên kết rồi mới xoá được. Sau khi sửa/xoá thì ở lại đúng
+    màn chi tiết đang xem (tải lại), sửa từ danh sách thì về danh
+    sách.
+- Sự cố trong lúc làm: một bản deploy giữa chừng (21:18) chứa script
+  lỗi (dư một dấu `}` trong hàm showForm) khiến toàn bộ JavaScript
+  của app chết — đã phát hiện qua kiểm tra script trang thật và
+  deploy bản sửa ngay lúc 21:24. Bài học: `node --check` file Worker
+  KHÔNG đủ (file chỉ là chuỗi, lỗi trong chuỗi vẫn qua) — bắt buộc
+  phải `node --check` script đã phục vụ trên trang thật sau mỗi lần
+  deploy. Ngoài ra: dấu nháy trong HTML sinh ra giữa chuỗi JS phải
+  viết `class=danger` (không dấu nháy) thay vì `class="ghost danger"`
+  — dấu nháy kép bị Worker nuốt mất khi ráp chuỗi, làm vỡ script.
+- Kiểm chứng: script trang thật `node --check` OK; harness 20 kiểm
+  tra đạt (sửa dự án/tài khoản/tài nguyên/vai trò → đúng PUT, xoá →
+  đúng DELETE, bấm Hủy thì không gọi API, xoá tài khoản đang gắn →
+  hiện đúng lỗi 409, form thêm mới xóa trắng sau khi sửa). Các
+  endpoint API mới chưa kiểm chứng trực tiếp bằng tài khoản Admin
+  (mật khẩu chỉ anh biết) — lần sửa/xoá thật đầu tiên của anh trên
+  app sẽ là kiểm chứng cuối.
+
+## Rà soát toàn bộ 2026-11-06 (21:32)
+
+- Kiểm tra live: health 200, trang chính 200, manifest 200,
+  sw.js 200 (cache `stk-v3`), icon 192/512 200, webhook Telegram
+  không secret trả 403 đúng. Script trang thật `node --check` OK,
+  cân bằng ngoặc nhọn = 0, không còn `ghost danger` hay dấu nháy
+  thừa; sw.js `node --check` OK.
+- Harness tổng 30 kiểm tra đạt 30/30: tải app + thống kê 3/6/8;
+  thẻ danh sách dự án/tài khoản đủ Chi tiết + Sửa + Xoá; tìm kiếm;
+  thêm mới dự án/tài khoản/gắn tài khoản/tài nguyên (đúng POST, đủ
+  các ô mới Link/Hết hạn/Ghi chú); xem chi tiết + sửa (điền sẵn,
+  lưu đúng PUT) + xoá (Hủy thì không gọi API, đồng ý thì DELETE +
+  thông báo) cho cả 4 loại; xoá tài khoản đang gắn → đúng lỗi 409;
+  sửa vai trò liên kết (PUT kèm old_role) + gỡ liên kết (DELETE kèm
+  role); form thêm mới xóa trắng sau khi sửa; xuất JSON hiện đủ;
+  chọn nền lưu + áp dụng; cài đặt app hiện ở cả màn đăng nhập lẫn
+  Cài đặt, bấm không lời mời thì hiện hướng dẫn làm tay, có lời mời
+  thì gọi đúng hộp cài.
+- Không phát hiện lỗi mới. Các mục đã biết vẫn chờ GĐ2 (chặn gắn
+  trùng, backup tự động R2, kiểm chứng sống, nhắc hết hạn) và chờ
+  anh: xác nhận bot Telegram trả lời đúng, nhập tài khoản AI thật.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
