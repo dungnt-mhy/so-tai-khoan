@@ -312,6 +312,42 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   tới); font Be Vietnam Pro bị chặn trong môi trường kiểm thử, mở
   bằng trình duyệt thật sẽ tải bình thường.
 
+## Tối ưu tốc độ + cài đặt app (PWA) 2026-11-06
+
+- Anh báo load quá chậm, yêu cầu tối ưu + thêm chức năng cài đặt
+  app. Đo thật từ máy chủ: trang HTML 32KB tải ~0,7s; API ~0,45s;
+  riêng **stylesheet font Be Vietnam Pro mất ~1s và CHẶN hiển thị**
+  (thẻ `<link rel=stylesheet>` trong `<head>`) — đây là thủ phạm
+  chính, do chính vòng thiết kế lại trước đó thêm vào.
+- Đã sửa:
+  - Font tải **không chặn hiển thị** (`media="print"` +
+    `onload="this.media='all'"`): trang hiện ngay bằng font hệ
+    thống, font đẹp về sau thì đổi sang — lần đầu mở không còn
+    chờ ~1s trắng trang.
+  - **Service worker** (`/sw.js`, cache `stk-v2`): vỏ trang
+    (stale-while-revalidate — mở là hiện ngay từ cache, cập nhật
+    ngầm), font cache-first, API chỉ đi mạng (dữ liệu luôn mới).
+  - ETag cho vỏ trang (`Cache-Control: public, max-age=0,
+    must-revalidate`): **đã kiểm chứng Cloudflare lược bỏ header
+    ETag trên đường về** (trả 200, không có ETag, dù code đúng) nên
+    304 chưa về được từ máy kiểm tra — service worker bù lại cho
+    các lần mở sau, không cần ETag.
+- **PWA — cài được lên màn hình chính:** manifest
+  (`/manifest.webmanifest`, standalone, theme `#047857`), icon
+  "Sổ" tự vẽ bằng PIL (192/512/maskable, nền xanh lá `#047857`,
+  chữ trắng), service worker đăng ký khi mở trang.
+- **Nút "📲 Cài đặt app" trong màn Cài đặt:** hiện khi trình duyệt
+  gửi lời mời cài (`beforeinstallprompt`); bấm là hiện hộp cài của
+  hệ thống. iPhone không có lời mời đó nên hiện hướng dẫn "bấm nút
+  Chia sẻ rồi chọn Thêm vào Màn hình chính". Đã cài rồi (mở từ icon)
+  thì nút ẩn, hiện "App đã được cài đặt trên thiết bị này."
+- Kiểm chứng: manifest/sw.js/3 icon đều 200 (PNG đúng định dạng);
+  sw.js `node --check` OK; harness 9 kiểm tra đạt (mở app, hiện
+  nút khi có lời mời, bấm cài gọi đúng hộp thoại, iOS hiện hướng
+  dẫn, đã cài ẩn nút, đăng ký service worker, danh sách + chọn nền
+  vẫn chạy). Lưu ý: lần mở đầu sau bản này vẫn tải mới (service
+  worker mới cài), từ lần thứ hai trở đi mở là hiện ngay.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
