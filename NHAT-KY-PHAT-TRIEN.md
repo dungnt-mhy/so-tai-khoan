@@ -256,6 +256,22 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   script trang thật `node --check` OK; harness 6 kiểm tra đạt
   (danh sách + chi tiết dự án/tài khoản đều đúng).
 
+## Tên tài khoản xanh + trạng thái cùng dòng với tên dự án 2026-11-06
+
+- Anh yêu cầu: tên tài khoản cho màu tím hoặc xanh; trạng thái "Đang
+  làm" cho ngang với tên dự án (cùng dòng).
+- Đã làm: tên tài khoản (email/label) thành màu xanh dương `#0284c7`
+  — em chọn xanh thay vì tím để giữ đúng ý anh dặn trước là bỏ tím
+  hoàn toàn, đồng thời đồng bộ với tiêu đề dự án. Trạng thái (Đang
+  làm/Tạm dừng/Đã xong) giờ nằm cùng dòng với tên dự án: hàng flex
+  `.titlerow` (tên bên trái, viên trạng thái bên phải, tên dài thì
+  tự xuống dòng), áp dụng cả ở thẻ dự án trong danh sách lẫn màn chi
+  tiết dự án.
+- Kiểm chứng: trang thật có đủ `.atitle`, `.titlerow`; script trang
+  thật `node --check` OK; harness 4 kiểm tra đạt (danh sách + chi
+  tiết: tên tài khoản xanh, trạng thái cùng dòng với tên dự án, viên
+  note nhà cung cấp vẫn còn).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
