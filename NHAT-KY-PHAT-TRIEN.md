@@ -438,6 +438,21 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   (mật khẩu chỉ anh biết) — lần sửa/xoá thật đầu tiên của anh trên
   app sẽ là kiểm chứng cuối.
 
+## Nút Chi tiết/Sửa/Xoá nhỏ gọn 2026-11-06
+
+- Anh gửi ảnh chụp: 3 nút trên thẻ to quá, xếp 2+1 chiếm chỗ. Đã
+  làm gọn: 3 nút nằm chung một hàng (`.rowbtns` flex, khe 8px),
+  nút nhỏ 36px/chữ 14px (`.sm` cho Chi tiết/Sửa, `.smd` đỏ nhạt
+  cho Xoá). Các nút nhỏ trong màn chi tiết (Vai trò/Gỡ, sửa/xoá
+  tài nguyên) cũng đổi sang cỡ nhỏ cho đồng bộ. Hàng Sửa/Xoá ở
+  màn chi tiết giữ nguyên (đã gọn sẵn).
+- Kỹ thuật: dùng class đơn không dấu nháy (`class=sm`) — class
+  hai từ phải viết `class="..."` sẽ lại vỡ script như lần trước
+  (Worker nuốt mất dấu nháy kép khi ráp chuỗi).
+- Kiểm chứng: script trang thật `node --check` OK; harness 10/10
+  (cả hai loại thẻ đều 3 nút trong đúng một hàng, không còn nút
+  ghost cỡ lớn, sửa/xoá vẫn chạy đúng).
+
 ## Rà soát toàn bộ 2026-11-06 (21:32)
 
 - Kiểm tra live: health 200, trang chính 200, manifest 200,
