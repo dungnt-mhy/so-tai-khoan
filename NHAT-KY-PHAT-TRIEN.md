@@ -379,6 +379,22 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   Cài đặt app → bấm nút. Nếu bấm mà không hiện hộp cài thì làm tay:
   menu ⋮ của trình duyệt → Thêm vào Màn hình chính.
 
+## Cài đặt app ngay màn đăng nhập 2026-11-06
+
+- Anh yêu cầu: để cài đặt app ngay màn đăng nhập (trước đây nút cài
+  chỉ có trong Cài đặt, phải đăng nhập mới tới được).
+- Đã làm: thêm khối "📲 Cài đặt app" (nút + dòng trạng thái) ngay
+  dưới nút Đăng nhập trên màn đăng nhập; giữ nguyên khối trong màn
+  Cài đặt. Hai chỗ dùng chung một logic qua class
+  `.installBtn`/`.installStatus` (`querySelectorAll`) — bấm ở đâu
+  thì cả hai chỗ cùng đổi trạng thái. Nút trong màn đăng nhập rộng
+  bằng ô nhập (`#login .installBtn{width:100%}`).
+- Kiểm chứng: trang thật có khối cài đặt ngay sau nút Đăng nhập +
+  đủ 2 nút/2 dòng trạng thái, không còn id cài đặt cũ; harness đạt
+  (chưa đăng nhập → màn đăng nhập hiện + nút cài hiện; bấm không
+  lời mời → hướng dẫn làm tay hiện ở cả hai chỗ; có lời mời → gọi
+  đúng hộp cài; iOS hiện hướng dẫn riêng).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
