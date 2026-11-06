@@ -122,6 +122,36 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   trùng do em tạo khi thử, đếm lại đúng 8 liên kết). GĐ2 cần thêm
   UNIQUE(project_id, account_id) hoặc kiểm tra trùng trước khi chèn.
 
+## Thiết kế lại giao diện 2026-11-06
+
+- Anh yêu cầu: đẹp hơn, bắt mắt; phân chia rõ block/section; thêm mới
+  thì hiện form nhập; phân biệt rõ giữa các dự án.
+- Đã làm: header gradient tím + tiêu đề; tab dạng viên thuốc; ô tìm
+  kiếm trong thẻ riêng; danh sách dạng lưới (mobile 1 cột, desktop
+  2 cột); mỗi thẻ dự án có vạch màu trên cùng xoay 6 màu + nhãn trạng
+  thái màu (Đang làm xanh lá / Tạm dừng vàng / Đã xong xám); thẻ tài
+  khoản có ô vuông chữ cái đầu nhà cung cấp, mỗi nhóm một màu; thẻ
+  chi tiết chia mục bằng tiêu đề section + dòng phân cách; Thống kê
+  hiện 3 ô số lớn; form thêm mới thành 4 nút chọn (Thêm dự án /
+  Thêm tài khoản / Gắn tài khoản / Thêm tài nguyên), bấm nút nào thì
+  chỉ hiện form đó, mỗi form một màu viền trái riêng.
+- Quy tắc rút ra từ lỗi lần trước: trong code JS của trang, thuộc tính
+  HTML chỉ dùng MỘT class duy nhất không có dấu nháy (ví dụ class
+  `pcard`, `bar0`, `avaai`, `chipb`, `sta`) — vì viết 2 class không
+  nháy (`class=card pcard`) trình duyệt sẽ đọc sai. Màu sắc đi qua
+  tên class, không đi qua `style=`.
+- Kiểm chứng: script trang thật chạy `node --check` OK; harness DOM
+  giả chạy đủ 8 kiểm tra (thẻ dự án có vạch màu + nhãn trạng thái,
+  thẻ tài khoản có avatar màu, chi tiết có section, form thêm mới
+  chuyển đúng, thống kê hiện số, gắn thử OK). Đã đẩy GitHub
+  (commit 7cdfe62).
+- Lưu ý: lúc sửa Thống kê em gõ thừa một dấu nháy làm script lỗi cú
+  pháp — đã sửa bằng cách đếm đúng mã ký tự từng vị trí, không đoán
+  bằng mắt nữa. Bài học: sau khi sửa chuỗi JS lồng nhau, luôn chạy
+  kiểm tra từng hàm bằng `new Function` để bắt đúng hàm lỗi.
+- Mật khẩu Admin: anh ĐÃ ĐỔI (kiểm tra lúc 15:55, mật khẩu tạm trả
+  401) — từ giờ đừng dùng mật khẩu tạm nữa.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
