@@ -38,11 +38,18 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
     xem lệnh đã thực hiện chưa trước khi thử lại (đã dính 2 tài khoản Muse
     test tạo trùng do thử lại mù).
 
-## Chờ (chưa làm — cần anh cấp)
+## Bot Telegram — nối xong 2026-11-06
 
-- Token bot Telegram mới → đặt secret `TELEGRAM_BOT_TOKEN` +
-  `TELEGRAM_WEBHOOK_SECRET` cho Worker, rồi set webhook
-  `/telegram/webhook`. Webhook đã code sẵn (`/tim`, `/duan`, `/taikhoan`).
+- Bot @sotaikhoanduan_bot ("Sổ tài khoản"). Token do anh gửi trong chat,
+  dùng xong là xóa dấu vết: chỉ đưa vào Worker secret `TELEGRAM_BOT_TOKEN`
+  + `TELEGRAM_WEBHOOK_SECRET` (secret webhook sinh ngẫu nhiên), không lưu
+  giá trị token vào file, repo hay bộ nhớ.
+- Webhook đã set về `https://so-tai-khoan.dungnt-storage.workers.dev/telegram/webhook`,
+  getWebhookInfo xác nhận pending 0, không lỗi. Lệnh: `/tim`, `/duan`, `/taikhoan`.
+- Lưu ý: lần set secret thứ 2 bị rớt kết nối (egress proxy), thử lại là được —
+  xem bài học egress proxy ở cuối file GĐ1.
+
+## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
 - Tài khoản AI/build thật (Muse #1/#2, GPT…) — chưa có dữ liệu thật để nhập,
