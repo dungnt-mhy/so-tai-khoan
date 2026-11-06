@@ -560,6 +560,51 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
 - Lưu ý: lần mở app đầu sau deploy có thể vẫn thấy bố cục cũ do
   service worker cache — tải lại 1 lần nữa là lên bố cục mới.
 
+## Tìm kiếm trong ô chọn tài khoản/dự án + tối ưu tốc độ + rà soát kỹ 2026-11-06 (23:37)
+
+- Anh gửi ảnh chụp bảng chọn tài khoản (kiểu radio của Android, không
+  tìm được khi nhiều tài khoản): "Thêm tìm kiếm chỗ này; và rà soát kỹ
+  lại, tối ưu tốc độ".
+- Tìm kiếm (3 ô chọn trong form Gắn tài khoản / Thêm tài nguyên):
+  - Ô "Tìm dự án…" trên chọn dự án, ô "Tìm tài khoản…" trên chọn tài
+    khoản (cả form Gắn lẫn form Tài nguyên). Gõ là lọc ngay theo tên /
+    nhà cung cấp / nhãn / định danh (vd gõ "muse", "github",
+    "cloudflare", "gmail" đều ra đúng).
+  - Tài khoản đang chọn không bao giờ bị lọc mất: nếu nó không khớp từ
+    khoá thì vẫn giữ lại đầu danh sách, giá trị chọn không đổi lặng lẽ.
+  - Đóng form / mở form khác thì ô tìm kiếm tự xoá trắng, danh sách về
+    đủ. Sửa vai trò / sửa tài nguyên vẫn điền sẵn đúng như trước.
+- Tối ưu tốc độ (đo bằng kiểm tra, không đoán):
+  - Tải danh sách chọn (dự án + tài khoản) trước đây gọi nối tiếp 2
+    lượt; nay gọi song song (`Promise.all` kiểu) + cache 60 giây: mở
+    form lần 2 trong 1 phút không gọi mạng nữa. Cache bị huỷ ngay sau
+    mọi thao tác thêm/sửa/xoá/gỡ (12 điểm), nên không bao giờ thấy
+    danh sách cũ sau khi vừa thêm tài khoản mới.
+  - Thống kê cũng gọi song song 2 lượt thay vì nối tiếp.
+  - Ô tìm kiếm chính trước đây gõ 1 chữ là gọi API 1 lần; nay chờ
+    250ms sau khi ngừng gõ mới gọi (debounce) — gõ "giao việc" chỉ còn
+    1 lần gọi thay vì ~9 lần.
+- Rà soát kỹ — sửa 2 race (phản hồi chậm về sau đè phản hồi mới):
+  - Chuyển tab Dự án → Tài khoản nhanh khi mạng chậm: phản hồi dự án
+    về muộn không còn vẽ đè lên danh sách tài khoản (ghi nhớ tab lúc
+    gọi, khác tab thì bỏ).
+  - Bấm liên tiếp 2 dự án: chi tiết chỉ hiện dự án bấm sau cùng, phản
+    hồi của dự án bấm trước về muộn thì bỏ.
+- Kiểm chứng: deploy 200, modified 2026-11-06T16:40:36Z; trang thật
+  200 (48.946B) đủ 3 ô tìm kiếm + renderLinkOptions + debounce +
+  song song + chặn race + 12 điểm huỷ cache; script trang thật
+  `node --check` OK, ngoặc 181/181; health 200. Harness mới 36/36
+  đạt: lọc đủ 5 từ khoá (muse/github/cloudflare/gmail/smart), giữ
+  lựa chọn khi bị lọc, xoá trắng khi đóng form, sửa vai trò vẫn chạy;
+  song song (2 lượt bắt đầu cùng mili-giây), cache (lần 2 không gọi
+  mạng, thêm dự án xong thì gọi lại), debounce (3 phím gõ → 1 lần
+  gọi); 2 race đều chặn đúng; hồi quy đầy đủ (boot/thống kê, danh
+  sách 2 cột, chi tiết, sửa/Hủy/xoá, xuất, nền, cài đặt app).
+- Chưa làm: thay hẳn bảng chọn native bằng dropdown tìm kiếm tự vẽ
+  (đẹp hơn nhưng nhiều rủi ro trên Samsung Internet; ô lọc hiện tại
+  đã giải quyết đúng nhu cầu "tìm kiếm chỗ này" với ít rủi ro nhất).
+  Nếu anh muốn dạng dropdown tự vẽ thì bảo em.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
