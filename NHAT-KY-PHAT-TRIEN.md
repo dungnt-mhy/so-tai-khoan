@@ -170,6 +170,32 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   hạn 10 → mở rộng 12 → thu gọn lại 10, nút đăng xuất hiện sau đăng
   nhập). Đã đẩy GitHub (commit 3eceba45).
 
+## Thiết kế lại toàn bộ: bỏ tím, thêm menu Cài đặt 2026-11-06
+
+- Anh gửi ảnh chụp: nút Xuất toàn bộ tím quá to + thanh đen bên dưới,
+  yêu cầu: đổi mật khẩu cho vào menu setup; các button cân đối; hỏi
+  thanh đen để làm gì; thiết kế lại toàn bộ; bỏ màu tím.
+- Thanh đen là ô kết quả xuất JSON (`<pre id="exportOut">`) — để trống
+  nên hiện thành thanh đen vô nghĩa. Đã sửa: ô này ẩn hẳn khi chưa
+  xuất, chỉ hiện sau khi bấm Xuất; nền đổi sang sáng, không còn đen.
+- Bỏ tím hoàn toàn: bảng màu mới xanh lá + xanh ngọc (emerald/teal)
+  trên nền xám nhạt — header gradient xanh lá, nút xanh lá, chip/tab/
+  vạch màu dự án/avatar đều đổi theo; đã quét toàn bộ trang thật,
+  không còn mã màu tím nào.
+- Menu Cài đặt mới (nút ⚙️ thứ 5 dưới chân): màn Thống kê chỉ còn 3 ô
+  số; Đổi mật khẩu + Xuất dữ liệu chuyển hết sang màn Cài đặt.
+- Button cân đối: nút lưu trong các form thêm mới và nút trong màn
+  Cài đặt đều rộng bằng nhau (full chiều rộng thẻ); nút Xuất đổi
+  thành nút phụ (ghost) thay vì nút to chói như trước.
+- Deploy gặp sự cố: `cf_deploy.py` (urllib) kẹt 503/504 liên tiếp —
+  cùng body đó deploy bằng curl lại 200 trong ~2 giây. Đã ghi bài học
+  vào AGENTS.md (kiểm tra `modified_on` trước khi thử lại; đổi sang
+  curl khi urllib kẹt).
+- Kiểm chứng: script trang thật chạy `node --check` OK; trang thật
+  không còn màu tím; harness DOM giả chạy 5 kiểm tra (vào app là
+  Thống kê, sang màn Cài đặt đúng, bấm Xuất hiện ô kết quả có nội
+  dung JSON, quay lại Thống kê đúng, danh sách dự án vẫn chạy).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
