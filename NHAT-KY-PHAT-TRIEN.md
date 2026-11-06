@@ -235,6 +235,27 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   đêm → về mặc định, nền ảnh `cover/fixed`, màn Cài đặt và Thống kê
   chuyển qua lại bình thường).
 
+## Tiêu đề xanh + nhà cung cấp kiểu note + gạch đầu dòng chỉ đậm nhãn 2026-11-06
+
+- Anh gửi 3 ảnh chụp, yêu cầu: chữ Cloudflare cho kiểu note (giống
+  trạng thái); các tiêu đề như "giao việc..." cho chữ xanh (blue);
+  các gạch đầu dòng như "repo" thì chỉ in đậm các chữ đấy, không đậm
+  cả câu.
+- Đã làm: tiêu đề dự án (cả ở danh sách lẫn màn chi tiết) thành màu
+  xanh dương `#0284c7`; chữ nhà cung cấp (Cloudflare...) thành viên
+  tròn kiểu trạng thái — nền xanh nhạt, chữ xanh đậm (class `.note`,
+  cùng dáng với các nhãn trạng thái Đang làm/Tạm dừng); các gạch đầu
+  dòng tài nguyên (`· d1: ...`, `· r2: ...`, `· repo: ...`) giờ chỉ
+  in đậm đúng nhãn (`d1:`, `r2:`, `repo:`), tên và mã sau đó để chữ
+  thường. Tiêu đề tài khoản (email/label) giữ nguyên màu tối.
+- Bài học thoát ký tự: nội dung tool trả về (JSON) hiển thị `\"`
+  nhưng trong file thật chỉ là `"` thường — chuỗi trong worker.js
+  dùng nháy đơn nên `"` không cần escape; lần sửa đầu vì tin theo
+  `\"` nên khớp 0, phải sửa lại dùng `"` thường mới khớp.
+- Kiểm chứng: trang thật có đủ `.ptitle`, `.note`, `<b>` nhãn;
+  script trang thật `node --check` OK; harness 6 kiểm tra đạt
+  (danh sách + chi tiết dự án/tài khoản đều đúng).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
