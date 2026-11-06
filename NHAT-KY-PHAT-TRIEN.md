@@ -49,6 +49,27 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
 - Lưu ý: lần set secret thứ 2 bị rớt kết nối (egress proxy), thử lại là được —
   xem bài học egress proxy ở cuối file GĐ1.
 
+## Backup R2 — kiểm chứng xong 2026-11-06
+
+- Cặp R2 API Token (Access Key ID + Secret) anh gửi trong chat, dùng xong
+  là lưu mã hoá ngay ở `~/.config/so-tai-khoan/` (`r2.key` +
+  `r2-credentials.enc`, AES-256-CBC + PBKDF2, 600), không lưu giá trị
+  vào file thường, repo hay bộ nhớ.
+- Helper S3 SigV4 tự viết (stdlib, không boto3):
+  `~/workspace/custom-connectors/custom.cloudflare/bin/r2_s3.py`
+  (list-buckets / list / put / get).
+- Backup đầu tiên: `backups/so-tai-khoan-2026-11-06.json` trong bucket
+  `so-tai-khoan-backups` (8.694 byte, 3 dự án / 6 tài khoản / 8 tài nguyên /
+  8 liên kết), tải về kiểm tra SHA256 khớp đúng file gốc.
+- Bài học kỹ thuật: (1) Đưa credential vào script bằng pipe openssl
+  hay bị treo — giải mã ra file tạm 600 rồi redirect stdin mới ổn định.
+  (2) SigV4: URI và query string phải tách riêng trong canonical request,
+  và giá trị query phải URI-encode (`prefix=backups%2F`, không để `/` trần)
+  nếu không sẽ SignatureDoesNotMatch.
+- Token Cloudflare dạng `cfat_...` anh gửi trước đó bị trả 401 Invalid API
+  Token khi gọi `/user/tokens/verify` — không dùng được, đã báo anh kiểm
+  tra lại/loại token.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
