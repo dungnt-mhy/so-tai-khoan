@@ -89,6 +89,39 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
 - Bot Telegram hiện chỉ tra cứu (/tim, /duan, /taikhoan) — thêm mới
   qua bot chưa có, nếu anh cần sẽ làm ở GĐ sau.
 
+## LỖI NẶNG: script webapp chết từ GĐ1, sửa 2026-11-06
+
+- Anh nhắn "Không có gì đâu, kiểm tra lại" sau khi em bảo tự nhập được.
+  Kiểm tra lại thì phát hiện: **toàn bộ JavaScript của webapp chưa từng
+  chạy được trên trình duyệt** — trang hiện ra nhưng nút Đăng nhập,
+  các tab, danh sách đều chết.
+- Nguyên nhân: trong `src/worker.js`, phần `<script>` chứa các chuỗi
+  HTML có dấu nháy kép lồng nhau (`onclick="viewAccount('...')"` nằm
+  trong chuỗi JS dùng nháy kép) — khi Worker ráp trang, các dấu nháy
+  này không còn được escape, trình duyệt đọc script tới đó là báo lỗi
+  cú pháp và dừng toàn bộ script. Lỗi có từ bản GĐ1 đầu tiên.
+- Vì sao không phát hiện sớm: em chỉ kiểm chứng API bằng curl
+  (API chạy tốt), chưa bao giờ kiểm tra code JS mà trình duyệt nhận
+  được có chạy được không. Bài học: sau mỗi lần deploy webapp, phải
+  tải trang thật về, tách phần `<script>` ra và chạy `node --check`
+  (hoặc chạy thử bằng harness DOM giả) — đã làm harness
+  `/tmp/stk-harness.js` để kiểm tra việc này.
+- Cách sửa: bỏ dấu nháy kép quanh giá trị thuộc tính HTML trong các
+  chuỗi JS (`onclick=viewAccount('...')`, `<option value=...>`,
+  bỏ luôn `style=...` có khoảng trắng viết sai), vì giá trị không
+  chứa khoảng trắng nên HTML không cần nháy.
+- Kiểm chứng sau sửa: script trang thật chạy `node --check` OK;
+  harness chạy `showTab('n')` nạp đúng dropdown 3 dự án / 6 tài khoản,
+  bấm gắn thử báo "Đã gắn tài khoản vào dự án."; API đăng nhập bằng
+  mật khẩu tạm vẫn 200 (anh chưa đổi — nhắc lại lần nữa).
+- Lưu ý khi kiểm chứng sau deploy: bản mới cần vài chục giây mới lan
+  tới mọi máy chủ Cloudflare — lần đầu tải ngay sau deploy vẫn thấy
+  bản cũ, tải lại sau đó mới thấy bản mới. Đừng kết luận vội.
+- Phát hiện thêm khi thử gắn trùng: API gắn tài khoản chưa chặn trùng —
+  gắn cùng cặp dự án–tài khoản lần 2 vẫn tạo dòng mới (đã xoá dòng
+  trùng do em tạo khi thử, đếm lại đúng 8 liên kết). GĐ2 cần thêm
+  UNIQUE(project_id, account_id) hoặc kiểm tra trùng trước khi chèn.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
