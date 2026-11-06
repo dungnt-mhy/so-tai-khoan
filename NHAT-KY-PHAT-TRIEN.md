@@ -438,6 +438,45 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   (mật khẩu chỉ anh biết) — lần sửa/xoá thật đầu tiên của anh trên
   app sẽ là kiểm chứng cuối.
 
+## Nút Hủy + rà soát toàn bộ kiểu lập trình viên lâu năm 2026-11-06
+
+- Anh hỏi: sửa chỉ có Lưu thay đổi mà không có Hủy à — đúng, đã
+  thiếu. Nay cả 4 form (thêm/sửa dự án, tài khoản, gắn tài khoản,
+  tài nguyên) đều có **Lưu + Hủy nằm cạnh nhau** trên một hàng.
+  Bấm Hủy thì bỏ hết thay đổi chưa lưu, xóa trắng form, trả tiêu
+  đề/nút về dạng thêm mới: đang sửa thì quay lại đúng màn chi tiết
+  đang xem; đang thêm mới thì quay lại đúng danh sách (Dự án hay
+  Tài khoản) đang xem trước đó.
+- Rà soát toàn bộ, phát hiện và sửa thêm:
+  - **API sửa không kiểm tra dữ liệu vào** (POST thì có, PUT thì
+    không): lưu tên trống là thành dự án/tài khoản không tên.
+    Nay PUT dự án/tài khoản/tài nguyên kiểm tra đúng như POST;
+    PUT tài nguyên còn kiểm tra tài khoản chủ có tồn tại không
+    (vì sửa được phép chuyển tài nguyên sang tài khoản khác).
+  - **Xuất dữ liệu thiếu mất phần quan trọng nhất**: bản xuất cũ
+    chỉ có dự án/tài khoản/tài nguyên, MẤT liên kết dự án–tài
+    khoản và ghi chú bí mật — khôi phục từ đó là mất hết quan hệ.
+    Nay xuất đủ cả liên kết lẫn bí mật (chỉ metadata, không giá
+    trị). Đồng thời nút Xuất giờ **tải về file JSON đầy đủ**
+    (so-tai-khoan-YYYY-MM-DD.json) thay vì chỉ hiện 4000 ký tự đầu
+    cho xem.
+  - **Đổi mật khẩu không thu hồi phiên khác**: trước đây đổi mật
+    khẩu xong, máy khác đang đăng nhập vẫn dùng tiếp. Nay đổi mật
+    khẩu thì đăng xuất hết các phiên khác, chỉ giữ phiên hiện tại.
+  - **Hàm thoát ký tự HTML thiếu dấu nháy**: tên dự án/tài khoản
+    có dấu `'` hoặc `"` có thể làm vỡ HTML. Nay thoát đủ cả hai.
+- Đã kiểm tra lại và giữ nguyên có chủ ý: một tài khoản được gắn
+  vào cùng một dự án với NHIỀU vai trò khác nhau (vd vừa build
+  chính vừa deploy) — đó là thiết kế theo mô hình nhiều-nhiều,
+  không phải lỗi trùng; nếu anh muốn mỗi cặp chỉ một vai trò thì
+  bảo em đổi ở GĐ2.
+- Kiểm chứng: script trang thật `node --check` OK, cân bằng
+  ngoặc 0; harness 19/19 đạt (Hủy từ sửa → về đúng chi tiết,
+  không lưu gì; Hủy từ thêm mới → về đúng danh sách; lưu sau khi
+  hủy vẫn chạy; tên có dấu nháy/thẻ HTML hiện đúng dạng thoát;
+  xuất đủ liên kết + bí mật + tải file; sửa/xoá/cài đặt app/nền
+  vẫn chạy).
+
 ## Nút Chi tiết/Sửa/Xoá nhỏ gọn 2026-11-06
 
 - Anh gửi ảnh chụp: 3 nút trên thẻ to quá, xếp 2+1 chiếm chỗ. Đã
