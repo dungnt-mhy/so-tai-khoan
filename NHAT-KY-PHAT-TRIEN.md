@@ -514,6 +514,52 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   trùng, backup tự động R2, kiểm chứng sống, nhắc hết hạn) và chờ
   anh: xác nhận bot Telegram trả lời đúng, nhập tài khoản AI thật.
 
+## Đổi bố cục mới hẳn — dashboard 2 cột + sidebar 2026-11-06 (23:17)
+
+- Anh: "Build lại giao diện" → chọn "Đổi bố cục mới hẳn".
+- Bố cục mới (thay hẳn khung cũ header trên + 1 cột):
+  - Desktop (≥900px): sidebar trái cố định 264px (logo + 5 mục điều hướng
+    Thống kê/Dự án/Tài khoản/Thêm mới/Cài đặt + Đăng xuất ở chân) và cột
+    nội dung phải với topbar dính (tiêu đề màn hiện tại + Đăng xuất).
+    Thanh tab dưới CHỈ còn trên mobile.
+  - Danh sách + chi tiết dạng master-detail 2 cột: danh sách trái
+    (tối đa 400px), chi tiết phải dính khi cuộn; bấm một mục thì thẻ đó
+    viền xanh lá nổi bật (`data-sel=1`); chi tiết không còn nuốt mất
+    danh sách như trước.
+  - Mobile (<900px): sidebar ẩn, tab dưới giữ nguyên; bấm một mục thì
+    chi tiết mở toàn màn hình (lớp phủ, có nút ← Quay lại).
+  - Màn Thống kê thành dashboard: 3 thẻ số riêng (Dự án/Tài khoản/Tài
+    nguyên) thay cho 1 thẻ gradient; thêm 2 khối "🕐 Mới cập nhật"
+    (5 dự án mới nhất, bấm là mở thẳng chi tiết) và "⏰ Sắp hết hạn".
+    Rắn 🐍 trên / ngựa 🐎 dưới vẫn giữ nguyên vị trí cũ.
+  - Đầu danh sách có hàng tìm kiếm + nút "+ Thêm" (đúng loại đang xem);
+    nút "Tìm" thừa đã bỏ (gõ là tìm ngay như trước).
+- Giữ nguyên toàn bộ tính năng và quyết định cũ: màu xanh lá + xanh
+  ngọc (không tím), tiêu đề xanh, note nhà cung cấp, chỉ đậm nhãn tài
+  nguyên, nút nhỏ 1 hàng, nút Hủy ở cả 4 form, chọn nền, cài đặt app
+  ở màn đăng nhập + Cài đặt, xuất JSON đủ links + secrets, đổi mật
+  khẩu thu hồi phiên khác, PUT kiểm tra dữ liệu.
+- Kỹ thuật: viết lại toàn bộ CSS + khung HTML + các hàm showTab /
+  renderList / viewProject / viewAccount / loadStats; thêm
+  emptyDetailHTML + closeDetail + biến selId; chuyển tab danh sách
+  thì tự xoá lựa chọn chi tiết; cache service worker bump stk-v3 →
+  stk-v4 (SW có skipWaiting + clients.claim nên lần tải sau là bản mới).
+- Kiểm chứng: deploy 200, modified 2026-11-06T16:24:18Z; trang thật
+  200 (45.427B) đủ sidebar + 5 snav + topbar + detail/detailWrap +
+  statgrid + recentList/expList, không còn header cũ/statcard/grid/#stats;
+  script trang thật `node --check` OK, ngoặc 169/169; sw.js stk-v4;
+  health 200. Harness mới 41/41 đạt: boot + thống kê (số, mới cập
+  nhật, sắp hết hạn, nav đồng bộ 2 nơi); danh sách 3 thẻ dự án / 6 thẻ
+  tài khoản đủ 3 nút; xem chi tiết vào pane phải (danh sách còn nguyên,
+  thẻ được chọn nổi bật, listCtl không mất); đóng chi tiết về trạng
+  thái trống; đổi tab xoá lựa chọn; tìm kiếm đúng query; sửa (điền
+  sẵn → PUT → về lại chi tiết) + Hủy (không PUT, về chi tiết); xoá
+  (Hủy thì không API, đồng ý thì DELETE); xuất đủ links/secrets + tên
+  file đúng; chọn nền lưu + áp dụng; cài đặt app hướng dẫn làm tay;
+  sửa vai trò (PUT kèm old_role); CSS mobile/desktop đúng breakpoint.
+- Lưu ý: lần mở app đầu sau deploy có thể vẫn thấy bố cục cũ do
+  service worker cache — tải lại 1 lần nữa là lên bố cục mới.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
