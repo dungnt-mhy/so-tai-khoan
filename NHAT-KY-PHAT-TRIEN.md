@@ -70,6 +70,25 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   Token khi gọi `/user/tokens/verify` — không dùng được, đã báo anh kiểm
   tra lại/loại token.
 
+## Tự nhập liệu — thêm form gắn + tài nguyên 2026-11-06
+
+- Anh hỏi "Tôi tự nhập được đúng không?" — lúc đó tab Thêm mới mới có
+  form thêm dự án và thêm tài khoản, CHƯA có form gắn tài khoản vào dự án
+  và thêm tài nguyên, nên tự nhập chưa đủ. Đã bổ sung ngay:
+  - "Gắn tài khoản vào dự án": chọn dự án + tài khoản + vai trò
+    (build chính/phụ, code, deploy, lưu trữ, đăng bài, thông báo) + ghi chú.
+  - "Thêm tài nguyên vào tài khoản": chọn tài khoản + loại
+    (repo, domain, worker, tunnel, D1, R2, fanpage, bot) + tên + định danh + link.
+- Hai form dùng chung API đã kiểm chứng ở GĐ1
+  (POST /api/projects/:id/accounts, POST /api/resources); danh sách chọn
+  nạp từ /api/projects + /api/accounts mỗi lần mở tab Thêm mới.
+- Kiểm chứng live: đăng nhập Admin vẫn dùng mật khẩu tạm được
+  (anh chưa đổi — nhắc lại: đổi ngay trong webapp, mục Thống kê);
+  dropdown dự án/tài khoản nạp đúng 3 dự án / 6 tài khoản; đã đẩy
+  GitHub (commit b941956e).
+- Bot Telegram hiện chỉ tra cứu (/tim, /duan, /taikhoan) — thêm mới
+  qua bot chưa có, nếu anh cần sẽ làm ở GĐ sau.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
