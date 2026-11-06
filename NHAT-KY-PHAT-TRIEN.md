@@ -348,6 +348,37 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   vẫn chạy). Lưu ý: lần mở đầu sau bản này vẫn tải mới (service
   worker mới cài), từ lần thứ hai trở đi mở là hiện ngay.
 
+## Sửa cài đặt app (PWA) — lần 2, 2026-11-06
+
+- Anh báo "Cài đặt app chưa được". Kiểm tra bằng trình duyệt thật:
+  manifest hợp lệ, sw.js hợp lệ, 3 icon tải đúng, 5 URL precache
+  đều 200 — nhưng trình duyệt kiểm tra không có DevTools nên không
+  xác nhận được service worker có đăng ký thật không và lời mời cài
+  có hiện không. Tự kiểm tra lại trang thật: link manifest + lệnh
+  đăng ký service worker đều có trong HTML — vậy lỗi nằm ở các
+  điểm yếu sau, đã sửa hết:
+  - Service worker trước đây đăng ký **sau khi trang tải xong**
+    (sự kiện load) — lần mở đầu tiên lời mời cài có thể trượt mất.
+    Nay đăng ký **ngay khi script chạy**.
+  - Precacher `caches.addAll` kiểu "một lỗi là hỏng tất cả": 1 file
+    lỗi là cả service worker không cài được → không đủ điều kiện
+    cài app. Nay cache từng file riêng, lỗi file nào bỏ qua file đó
+    (cache `stk-v3`).
+  - Nút "Cài đặt app" trước đây **chỉ hiện khi trình duyệt gửi lời
+    mời** (`beforeinstallprompt`) — trình duyệt không gửi (Samsung
+    Internet, đã từng từ chối, lần mở đầu...) thì người dùng không
+    thấy gì để bấm. Nay nút **luôn hiện** (trừ khi đã cài rồi hoặc
+    iPhone); bấm mà trình duyệt chưa hiện hộp cài thì app chỉ đúng
+    cách làm tay: menu ⋮ (góc phải trên) → Thêm vào Màn hình chính.
+- Kiểm chứng: sw.js `stk-v3` + precache riêng lẻ; trang thật có đủ
+  manifest/SW/nút; harness 10 kiểm tra đạt (đăng ký SW ngay khi mở
+  trang, nút hiện ngay cả khi chưa có lời mời, bấm không lời mời →
+  hiện hướng dẫn làm tay, có lời mời → gọi đúng hộp cài, iOS và đã
+  cài vẫn đúng, danh sách + chọn nền vẫn chạy).
+- Cách cài cho anh: tải lại app một lần → đăng nhập → Cài đặt →
+  Cài đặt app → bấm nút. Nếu bấm mà không hiện hộp cài thì làm tay:
+  menu ⋮ của trình duyệt → Thêm vào Màn hình chính.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
