@@ -746,6 +746,32 @@ tra rồi đều ổn — hai lần chụp đầu bị sai markup thử nên su�
   2026-11-07T14:24:46Z; trang thật 200 (51.524B); health 200.
   Harness mới 30/30 đạt (hồi quy + test nbsp + dấu vết CSS mobile).
 
+## 07/11/2026 — Mất menu bên dưới (anh báo qua ảnh chụp 21:45)
+
+Ảnh chụp màn Thống kê trên Samsung Internet: không thấy menu dưới
+(Thống kê/Dự án/Tài khoản/Thêm mới/Cài đặt), chỉ còn thanh công cụ
+của trình duyệt. Kiểm tra: menu vẫn có đủ trong HTML/CSS live, và
+chụp thử bằng Chromium thì menu hiện bình thường — nguyên nhân là
+thanh công cụ đáy của Samsung Internet đè lên phần tử
+`position:fixed;bottom:0` (layout viewport của Samsung không co lại
+cho thanh này nên menu nằm sau thanh trình duyệt).
+- Sửa: thêm `fixNav()` — đo phần bị che bằng
+  `window.innerHeight - visualViewport.height` rồi nâng menu lên đúng
+  chừng đó; chạy lại mỗi khi resize/cuộn (thanh trình duyệt ẩn/hiện
+  theo cuộn) và sau 500ms; có kiểm tra phòng thủ khi trình duyệt
+  không hỗ trợ.
+- Cùng ảnh chụp còn lộ một lỗi nữa: mô tả dự án chứa token/key dài
+  không ngắt làm tràn ngang trang, chữ chạy ra khỏi mép phải. Sửa:
+  chữ muted được ngắt từ dài ở mọi nơi (`overflow-wrap:anywhere`),
+  khối chữ trong hàng "Mới cập nhật" và thẻ tài khoản co lại được
+  (`min-width:0`) thay vì đẩy rộng cả hàng.
+- Kiểm chứng: harness 38/38 đạt (mô phỏng thanh Samsung 56px thì
+  menu nâng lên 56px, thanh ẩn thì menu về 0px, sự kiện resize gọi
+  đúng fixNav); chụp lại màn Thống kê 360px với đúng token dài của
+  anh — chữ đã gãy dòng gọn trong thẻ, không còn tràn mép phải.
+  Deploy 200, modified 2026-11-07T14:50:35Z; trang thật 200
+  (52.058B); health 200.
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
