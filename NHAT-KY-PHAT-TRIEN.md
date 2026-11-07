@@ -605,6 +605,33 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   đã giải quyết đúng nhu cầu "tìm kiếm chỗ này" với ít rủi ro nhất).
   Nếu anh muốn dạng dropdown tự vẽ thì bảo em.
 
+## Popup thông báo trong app (toast + xác nhận) 2026-11-07 (07:52)
+
+- Anh: "Hiện popup các thông báo (không phải popup trình duyệt)".
+- Thay toàn bộ hộp thoại trình duyệt bằng popup trong app:
+  - Toast: thông báo hiện góc phải trên (mobile: tràn full chiều ngang),
+    viền trái xanh lá khi thành công, đỏ khi lỗi; tự tắt sau 3,5 giây,
+    có nút ✕ để tắt tay. Dòng `#msg` đỏ cố định trên đầu trang đã bỏ
+    (trước đây cả thông báo thành công cũng hiện màu đỏ).
+  - Hộp xác nhận: bấm Xoá/Gỡ thì hiện thẻ nổi giữa màn (nền mờ), ghi
+    rõ nội dung sẽ xoá + nút Hủy / nút xác nhận đỏ; bấm ra ngoài thẻ
+    cũng là Hủy. Không còn `confirm()` của trình duyệt ở đâu cả
+    (4 chỗ: xoá dự án / tài khoản / tài nguyên / gỡ liên kết).
+  - Mọi thông báo sau thao tác (lưu, xoá, gắn, gỡ, lỗi mạng/lỗi
+    server) đều đi qua toast, phân biệt thành công (xanh) và lỗi (đỏ).
+    Thông báo trong form (đăng nhập, đổi mật khẩu, ảnh nền) vẫn giữ
+    tại chỗ cạnh ô nhập vì đang nhìn form.
+- Kiểm chứng: deploy 200, modified 2026-11-07T00:54:43Z; trang thật
+  200 (50.691B) đủ #toasts + #confirmOverlay + CSS popup; script
+  trang thật `node --check` OK, ngoặc 188/188; health 200; không
+  còn `getElementById("msg")` hay `confirm(` nào. Harness mới 32/32
+  đạt: modal mở đúng chữ + nút, Hủy thì không gọi API, đồng ý thì
+  DELETE + toast xanh đúng chữ (cả 4 loại xoá/gỡ); toast lỗi đỏ hiện
+  đúng thông báo server ("Tên dự án bắt buộc"); toast lưu thành công;
+  nút ✕ tắt được toast; hồi quy (thống kê, lọc bảng chọn, song song +
+  cache + debounce, 2 race, danh sách 2 cột, sửa/Hủy, xuất, nền,
+  cài đặt app).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
