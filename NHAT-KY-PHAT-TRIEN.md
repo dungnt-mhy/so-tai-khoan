@@ -720,6 +720,32 @@ khoản gắn 2 vai trò (chính/phụ), đều hiện thành 2 chip giống h�
   khoản khác nhau trùng nhãn email thì 2 chip khác nhau rõ; cùng
   1 tài khoản 2 vai trò thì chip khác nhau ở (chính)/(phụ)).
 
+## 07/11/2026 — Sửa lỗi giao diện mobile (anh: "Sửa lỗi giao diện mobile")
+
+Anh không mô tả cụ thể nên em tự dựng trang thử đúng CSS + nội dung
+thật rồi chụp màn hình mobile 360px/320px bằng Chromium headless để
+tìm lỗi. Tìm được 3 lỗi thật (topbar, menu dưới, màn chi tiết kiểm
+tra rồi đều ổn — hai lần chụp đầu bị sai markup thử nên suýt sửa nhầm):
+1. **Chip build gãy 2 dòng** (mới từ bản sửa chip 12:30): chip dài
+   "🔨 Cloudflare — dungnt.storage@gmail.com (phụ)" quá rộng so với
+   thẻ trên mobile nên "(phụ)" rớt xuống dòng một mình. Sửa: chip
+   build thu nhỏ trên mobile (11px, padding 3px 8px) để vừa một dòng
+   ở 360px; vai trò dính vào nhãn bằng khoảng trắng không ngắt
+   (nbsp) nên màn hẹp hơn vẫn gãy sạch ("🔨 Cloudflare —" /
+   "email (phụ)") thay vì để "(phụ)" trơ trọi.
+2. **Nút "Chi tiết" gãy chữ** ("Chi/tiết") trên thẻ tài khoản: avatar
+   bóp hẹp hàng nút. Sửa: nút trong `.rowbtns` không bao giờ gãy chữ
+   (`white-space:nowrap`, bỏ `min-width:0` — hàng hẹp thì nút xuống
+   dòng nguyên nút nhờ `flex-wrap`); nút Chi tiết/Sửa/Xoá thu nhỏ
+   trên mobile (13px, padding 6px 8px).
+3. **Nhãn ô số thống kê gãy dòng** ("Tài khoản" → "Tài/khoản").
+   Sửa: `.statmini` bớt padding trên mobile (16px 8px), nhãn 12px.
+- Kiểm chứng: chụp lại 360px + 320px — chip vừa một dòng (chip dài
+  nhất gãy sạch), nút "Chi tiết" một dòng, nhãn thống kê một dòng;
+  topbar/menu dưới/màn chi tiết vẫn ổn. Deploy 200, modified
+  2026-11-07T14:24:46Z; trang thật 200 (51.524B); health 200.
+  Harness mới 30/30 đạt (hồi quy + test nbsp + dấu vết CSS mobile).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
