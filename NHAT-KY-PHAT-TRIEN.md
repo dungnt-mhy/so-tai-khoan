@@ -632,6 +632,76 @@ Quy ước: ghi mọi thay đổi khi xây; cuối mỗi giai đoạn hoàn thi�
   cache + debounce, 2 race, danh sách 2 cột, sửa/Hủy, xuất, nền,
   cài đặt app).
 
+## 07/11/2026 — Rà soát 4 lượt để tối ưu (anh: "rà sát 4 lần")
+
+Anh yêu cầu rà soát kỹ 4 lần để tối ưu. Làm 4 lượt, mỗi lượt một
+góc, sửa xong mới deploy một lần rồi kiểm chứng tổng.
+
+- Lượt 1 — Hiệu năng (server, cái chậm thật nằm ở đây):
+  Trước đây mỗi lần mở danh sách là N+1 truy vấn D1: listProjects
+  1+2N (mỗi dự án tốn thêm 2 truy vấn đếm + build), listAccounts
+  1+2N, projectDetail 1+1+N (tài nguyên từng tài khoản). Nay:
+  listProjects còn 2 truy vấn (đếm bằng scalar subquery + 1 truy
+  vấn IN gộp build_accounts, chia lô 400 để không chạm giới hạn
+  biến SQLite); listAccounts còn 1 truy vấn (2 scalar subquery);
+  projectDetail còn 3 truy vấn (tài nguyên gộp 1 IN). Các chùm
+  truy vấn độc lập chạy song song bằng Promise.all: accountDetail
+  (4), /api/stats (4), /api/search (3), /api/export (5), bot /tim
+  (2). Icon PNG không còn atob + giải mã mỗi lần request mà cache
+  sẵn trong bộ nhớ Worker (iconBytes). Đã kiểm chứng SQL mới trên
+  SQLite local với dữ liệu hạt giống: số đếm, tìm kiếm (github →
+  3 dự án, cloudflare → 2 dự án), build link, tài nguyên đều khớp
+  đúng kết quả truy vấn cũ. Phía client đã song song sẵn
+  (loadLinkOptions, loadStats) nên không sửa thêm; cache danh sách
+  theo tab thì KHÔNG làm — sau thêm/sửa/xoá phải thấy dữ liệu mới
+  ngay, rủi ro danh sách cũ lớn hơn lợi ích.
+- Lượt 2 — UX/UI (đo thật, không đoán):
+  Màn 900–1099px (laptop nhỏ/tablet) trước đây cột chi tiết chỉ
+  còn ~232px vì sidebar 264 + danh sách 340 — nay xếp 1 cột
+  (danh sách trên, chi tiết dưới, tĩnh) trong khoảng này, 2 cột
+  chỉ từ 1100px trở lên. Thẻ đăng nhập trên điện thoại trước đây
+  chạm mép màn hình — nay có lề 16px. Thanh công cụ danh sách
+  được xuống dòng trên màn rất hẹp (<360px). Tương phản đo bằng
+  tính toán WCAG: tiêu đề xanh #0284C7 trên trắng chỉ 4.1:1
+  (chưa đạt AA 4.5:1) → đậm hơn một nấc #0369A1 = 5.93:1, vẫn
+  xanh; chữ phụ #64748B trên nền #F1F5F9 chỉ 4.34:1 → #5B6B7C =
+  4.99:1. Ba chỗ #0284C7 còn lại (vạch màu thẻ, avatar infra,
+  viền form tài nguyên) là trang trí, không phải chữ nên giữ.
+- Lượt 3 — Đúng đắn / bền vững:
+  4 endpoint PUT trước đây trả ok:true dù id không tồn tại — nay
+  kiểm tra meta.changes, không có dòng nào khớp thì trả 404
+  ("Không thấy dự án/tài khoản/tài nguyên/liên kết"). Xoá dự án,
+  xoá tài khoản, đổi mật khẩu: nhiều lệnh DELETE/UPDATE rời rạc
+  nay gộp thành 1 transaction bằng D1 batch (xoá dở giữa chừng
+  không còn để lại dữ liệu nửa vời; đổi mật khẩu thì thu hồi phiên
+  khác cùng lúc với đổi hash). Mở hộp xác nhận thứ hai thì hộp đầu
+  tự huỷ (trước đây promise đầu treo mãi). Xuất dữ liệu thu hồi
+  object URL sau 1 giây. Ảnh nền lỗi thì báo "Ảnh không đọc được"
+  thay vì im lặng. Gắn tài khoản / thêm tài nguyên xong thì làm mới
+  luôn chi tiết đang xem (trước đây phải quay lại mới thấy).
+  "Sắp hết hạn" tính theo ngày giờ VN (+7h) thay vì UTC. Đăng nhập
+  dọn các phiên đã hết hạn của chính user đó. Service worker bump
+  stk-v4 → stk-v5 để vỏ mới thay vỏ cũ ngay (tránh 1 lần tải cũ).
+  Rà soát XSS/SQL: mọi truy vấn đều .bind, LIKE escape % _ \,
+  mọi dữ liệu người dùng ra HTML đều qua esc() — không phát hiện
+  lỗ hổng.
+- Lượt 4 — Kiểm chứng cuối:
+  Deploy 200, modified 2026-11-07T01:14:18Z. Trang thật 200
+  (51.264B) đủ dấu vết mới: #0369A1 ×3, #5B6B7C, 1099px,
+  prev(false), revokeObjectURL; sw.js chứa stk-v5; health 200;
+  webhook không secret 403. Script trang thật `node --check` OK.
+  Harness mới 50/50 đạt: hồi quy đầy đủ (thống kê, danh sách,
+  tìm kiếm debounce, lọc bảng chọn, song song + cache, 2 race,
+  sửa/Hủy, 4 loại xoá/gỡ, xuất, nền, cài đặt app) + 10 kiểm tra
+  mới cho vòng này (hộp xác nhận mở chồng, thu hồi URL, ảnh nền
+  lỗi/quá lớn, làm mới chi tiết sau gắn/thêm, CSS + SW mới, PUT
+  404 → toast lỗi). Trong lúc sửa có 1 lỗi do chính tay mình:
+  trùng `const salt` ở đổi mật khẩu — `node --check` bắt được
+  trước khi deploy, đã sửa. Bài học harness: bộ đếm ngoặc thô
+  sai với regex /\'/g trong script — bỏ, chỉ dùng parser thật
+  (vm.Script) làm kiểm tra cú pháp.
+- Sau deploy anh tải lại app 1 lần để nhận vỏ mới (SW stk-v5).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
