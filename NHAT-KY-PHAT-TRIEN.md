@@ -702,6 +702,24 @@ góc, sửa xong mới deploy một lần rồi kiểm chứng tổng.
   (vm.Script) làm kiểm tra cú pháp.
 - Sau deploy anh tải lại app 1 lần để nhận vỏ mới (SW stk-v5).
 
+## 07/11/2026 — Chip build hiện nhà cung cấp + vai trò (anh báo qua ảnh chụp)
+
+Anh chụp màn hình: trên thẻ dự án hiện 2 chip "🔨 ntdung.tds@gmail.com"
+y hệt nhau, không biết cái nào là của Cloudflare. Nguyên nhân: chip
+build trên thẻ dự án chỉ in nhãn (label), không in nhà cung cấp hay
+vai trò — nên 2 tài khoản khác nhau mà trùng nhãn, hoặc cùng 1 tài
+khoản gắn 2 vai trò (chính/phụ), đều hiện thành 2 chip giống hệt.
+- Sửa: chip build nay in "🔨 Nhà cung cấp — Nhãn (chính/phụ)", vd
+  "🔨 Cloudflare — ntdung.tds@gmail.com (chính)". Cùng định dạng
+  với ô chọn Gắn tài khoản và màn chi tiết (đã có "Nhà cung cấp —
+  Nhãn" từ trước). Thẻ Telegram /tim, /duan cũng thêm nhà cung cấp
+  vào dòng Build (trước đây chỉ có nhãn + vai trò).
+- Kiểm chứng: deploy 200, modified 2026-11-07T05:31:26Z; trang thật
+  200 (51.336B) chứa đúng mã chip mới; health 200; sw.js stk-v5.
+  Harness mới 55/55 đạt (hồi quy 50 test cũ + 5 test mới: 2 tài
+  khoản khác nhau trùng nhãn email thì 2 chip khác nhau rõ; cùng
+  1 tài khoản 2 vai trò thì chip khác nhau ở (chính)/(phụ)).
+
 ## Chờ (chưa làm — cần anh cấp)
 - R2 API Token → backup mã hoá lên R2 (GĐ1 mới có export JSON, chưa có
   backup tự động lên R2).
